@@ -99,7 +99,7 @@ def split4(data, max_stride, margin):
     h_width = np.ceil(float(h / 2 + margin) /
                       max_stride).astype('int') * max_stride
     pad = int(np.ceil(float(z) / max_stride) * max_stride) - z
-    leftpad = pad / 2
+    leftpad = pad // 2
     pad = [[0, 0], [0, 0], [leftpad, pad - leftpad], [0, 0], [0, 0]]
     data = np.pad(data, pad, 'constant', constant_values=-1)
     data = torch.from_numpy(data)
@@ -120,9 +120,9 @@ def combine4(output, h, w):
         (splits[0].shape[0], h, w, splits[0].shape[3],
          splits[0].shape[4]), np.float32)
 
-    h0 = output.shape[1] / 2
+    h0 = output.shape[1] // 2
     h1 = output.shape[1] - h0
-    w0 = output.shape[2] / 2
+    w0 = output.shape[2] // 2
     w1 = output.shape[2] - w0
 
     splits[0] = splits[0][:, :h0, :w0, :, :]
@@ -177,9 +177,9 @@ def combine8(output, z, h, w):
     output = np.zeros(
         (z, h, w, splits[0].shape[3], splits[0].shape[4]), np.float32)
 
-    z_width = z / 2
-    h_width = h / 2
-    w_width = w / 2
+    z_width = z // 2
+    h_width = h // 2
+    w_width = w // 2
     i = 0
     for zz in [[0, z_width], [z_width - z, None]]:
         for hh in [[0, h_width], [h_width - h, None]]:
@@ -220,11 +220,11 @@ def combine16(output, z, h, w):
     output = np.zeros(
         (z, h, w, splits[0].shape[3], splits[0].shape[4]), np.float32)
 
-    z_width = z / 4
-    h_width = h / 2
-    w_width = w / 2
-    splitzstart = splits[0].shape[0] / 2 - z_width / 2
-    z_pos = [z * 3 / 8 - z_width / 2, z * 5 / 8 - z_width / 2]
+    z_width = z // 4
+    h_width = h // 2
+    w_width = w // 2
+    splitzstart = splits[0].shape[0] // 2 - z_width // 2
+    z_pos = [z * 3 // 8 - z_width // 2, z * 5 // 8 - z_width // 2]
     i = 0
     for zz, zz2 in zip(
         [[0, z_width], [z_width, z_width * 2], [z_width * 2, z_width * 3],
@@ -251,8 +251,8 @@ def split32(data, max_stride, margin):
     h_width = np.ceil(float(h / 4 + margin) /
                       max_stride).astype('int') * max_stride
 
-    w_pos = [w * 3 / 8 - w_width / 2, w * 5 / 8 - w_width / 2]
-    h_pos = [h * 3 / 8 - h_width / 2, h * 5 / 8 - h_width / 2]
+    w_pos = [w * 3 // 8 - w_width // 2, w * 5 // 8 - w_width // 2]
+    h_pos = [h * 3 // 8 - h_width // 2, h * 5 // 8 - h_width // 2]
 
     for zz in [[0, z_width], [-z_width, None]]:
         for hh in [[0, h_width], [h_pos[0], h_pos[0] + h_width],
@@ -273,8 +273,8 @@ def combine32(splits, z, h, w):
     z_width = int(np.ceil(float(z) / 2))
     h_width = int(np.ceil(float(h) / 4))
     w_width = int(np.ceil(float(w) / 4))
-    splithstart = splits[0].shape[1] / 2 - h_width / 2
-    splitwstart = splits[0].shape[2] / 2 - w_width / 2
+    splithstart = splits[0].shape[1] // 2 - h_width // 2
+    splitwstart = splits[0].shape[2] // 2 - w_width // 2
 
     i = 0
     for zz in [[0, z_width], [z_width - z, None]]:
@@ -310,9 +310,9 @@ def split64(data, max_stride, margin):
     h_width = np.ceil(float(h / 4 + margin) /
                       max_stride).astype('int') * max_stride
 
-    z_pos = [z * 3 / 8 - z_width / 2, z * 5 / 8 - z_width / 2]
-    w_pos = [w * 3 / 8 - w_width / 2, w * 5 / 8 - w_width / 2]
-    h_pos = [h * 3 / 8 - h_width / 2, h * 5 / 8 - h_width / 2]
+    z_pos = [z * 3 // 8 - z_width // 2, z * 5 // 8 - z_width // 2]
+    w_pos = [w * 3 // 8 - w_width // 2, w * 5 // 8 - w_width // 2]
+    h_pos = [h * 3 // 8 - h_width // 2, h * 5 // 8 - h_width // 2]
 
     for zz in [[0, z_width], [z_pos[0], z_pos[0] + z_width],
                [z_pos[1], z_pos[1] + z_width], [-z_width, None]]:
@@ -337,9 +337,9 @@ def combine64(output, z, h, w):
     z_width = int(np.ceil(float(z) / 4))
     h_width = int(np.ceil(float(h) / 4))
     w_width = int(np.ceil(float(w) / 4))
-    splitzstart = splits[0].shape[0] / 2 - z_width / 2
-    splithstart = splits[0].shape[1] / 2 - h_width / 2
-    splitwstart = splits[0].shape[2] / 2 - w_width / 2
+    splitzstart = splits[0].shape[0] // 2 - z_width // 2
+    splithstart = splits[0].shape[1] // 2 - h_width // 2
+    splitwstart = splits[0].shape[2] // 2 - w_width // 2
 
     i = 0
     for zz, zz2 in zip(

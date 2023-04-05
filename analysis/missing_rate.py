@@ -100,7 +100,7 @@ def analyze_features(task):
         value_list = sorted(vital_dict[col])
         if len(value_list) == 0:
             continue
-        fn = len(value_list) / 4
+        fn = len(value_list) // 4
         myprint('{:s}, {:d}%, {:3.2f}, {:3.2f},{:3.2f},{:3.2f}'.format(col.replace(';', ','), (i_line - len(value_list))*100/i_line, value_list[0], value_list[fn], value_list[fn*3], value_list[-1]))
 
         ms_list.append((i_line - len(value_list))*100.0/i_line)

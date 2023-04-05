@@ -202,6 +202,7 @@ def main():
 
     cudnn.benchmark = True
     net = lstm.LSTM(args)
+    print('initializing loss ...')
     if args.gpu:
         net = net.cuda()
         p_dict['loss'] = loss.Loss().cuda()

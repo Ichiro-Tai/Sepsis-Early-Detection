@@ -17,7 +17,7 @@ args = parse.args
 
 
 def time_encoding_data(d = 512, time = 200):
-    vec = np.array([np.arange(time) * i for i in range(d/2)], dtype=np.float32).transpose()
+    vec = np.array([np.arange(time) * i for i in range(d // 2)], dtype=np.float32).transpose()
     vec = vec / vec.max() / 2
     encoding = np.concatenate((np.sin(vec), np.cos(vec)), 1)
     encoding = torch.from_numpy(encoding)
@@ -43,10 +43,10 @@ class LSTM(nn.Module):
             nn.Linear ( opt.embed_size, opt.embed_size ),
         )
         self.tv_mapping = nn.Sequential (
-            nn.Linear ( opt.embed_size , opt.embed_size / 2),
+            nn.Linear ( opt.embed_size , opt.embed_size // 2),
             nn.ReLU ( ),
             nn.Dropout ( 0.25 ),
-            nn.Linear ( opt.embed_size / 2, opt.embed_size ),
+            nn.Linear ( opt.embed_size // 2, opt.embed_size ),
         )
         self.alpha = nn.Linear(args.embed_size, 1)
 
