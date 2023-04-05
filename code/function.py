@@ -29,7 +29,7 @@ def save_model(p_dict, name='best.ckpt', folder='../data/models/'):
         os.mkdir(folder)
     model = p_dict['model']
     state_dict = model.state_dict()
-    for key in state_dict.keys():
+    for key in list(state_dict.keys()):
         state_dict[key] = state_dict[key].cpu()
     all_dict = {
             'epoch': p_dict['epoch'],
@@ -62,7 +62,7 @@ def save_segmentation_results(images, segmentations, folder='../data/middle_segm
     segmentations[segmentations<0] = 0
 
     # print(images.shape, segmentations.shape)
-    for ii, image, seg in zip(range(len(images)), images, segmentations):
+    for ii, image, seg in zip(list(range(len(images))), images, segmentations):
         image = data_function.numpy_to_image(image)
         new_seg = np.zeros([3, seg.shape[1] * stride, seg.shape[2] * stride])
         for i in range(seg.shape[1]):
@@ -87,7 +87,7 @@ def save_middle_results(data, folder = '../data/middle_images'):
     seg_labels = seg_labels*127 + 127
 
 
-    for ii, name, image, seg, bbox_image in zip(range(len(image_names)), image_names, images, seg_labels, bbox_images):
+    for ii, name, image, seg, bbox_image in zip(list(range(len(image_names))), image_names, images, seg_labels, bbox_images):
         name = name.split('/')[-1]
         image = data_function.numpy_to_image(image)
         new_seg = np.zeros([3, seg.shape[1] * stride, seg.shape[2] * stride])
@@ -117,7 +117,7 @@ def save_detection_results(names, images, detect_character_output, folder='../da
     images = (images * 128) + 127
     # detect_character_output = detect_character_output.data.cpu().numpy()    # [bs, w, h, n_anchors, 5+class]
 
-    for i, name, image, bboxes in zip(range(len(names)), names, images, detect_character_output):
+    for i, name, image, bboxes in zip(list(range(len(names))), names, images, detect_character_output):
         name = name.split('/')[-1]
 
         ### 保存原图
@@ -217,8 +217,8 @@ def print_metric(first_line, metric_dict, phase='train'):
     
     loss_array = loss_array.reshape(-1)
 
-    print('loss: {:3.4f}\t pos loss: {:3.4f}\t negloss: {:3.4f}'.format(loss_array[0], loss_array[1], loss_array[2]))
-    print('accuracy: {:3.4f}\t f1score: {:3.4f}\t recall: {:3.4f}\t precision: {:3.4f}'.format(accuracy, f1score, recall, precision))
+    print(('loss: {:3.4f}\t pos loss: {:3.4f}\t negloss: {:3.4f}'.format(loss_array[0], loss_array[1], loss_array[2])))
+    print(('accuracy: {:3.4f}\t f1score: {:3.4f}\t recall: {:3.4f}\t precision: {:3.4f}'.format(accuracy, f1score, recall, precision)))
     print('\n')
 
     if phase != 'train':
@@ -232,10 +232,10 @@ def load_all():
     pre = ''
     for fi in sorted(os.listdir(fo)):
         if fi[:5] != pre:
-            print
+            print()
             pre = fi[:5]
         x = torch.load(os.path.join(fo, fi))
         # print x['epoch'], fi
-        print x['best_metric'], fi
+        print(x['best_metric'], fi)
 load_all()
 

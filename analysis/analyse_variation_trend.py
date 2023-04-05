@@ -29,7 +29,7 @@ def analyse_variation_trend(task='task1'):
     feature_time_value_dict = dict()
     for i_line,line in enumerate(open(vital_file)):
         if i_line % 10000 == 0:
-            print i_line
+            print(i_line)
         if i_line:
             ctt_list = line.strip().split(',')[2:]
             new_ctt = line.strip().split(',')[:2]
@@ -42,7 +42,7 @@ def analyse_variation_trend(task='task1'):
             time = int(float(time))
 
             if patient != last_patient:
-                for feature, tv in feature_time_value_dict.items():
+                for feature, tv in list(feature_time_value_dict.items()):
                     if len(tv) > 4:
                         ts = sorted(tv.keys())
                         vs = [tv[t] for t in ts]
@@ -78,7 +78,7 @@ def draw_pic():
 
     for f in range(143):
         vt = fvt[str(f)]
-        print vt
+        print(vt)
         for i, (t, v) in enumerate(vt):
             plt.plot(t,v)
             if i > 10:

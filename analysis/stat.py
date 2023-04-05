@@ -22,10 +22,10 @@ def ana_feat_dist(task):
     [ [ [0. for _ in range(n_split)], [0. for _ in range(n_split)] ] for i in range(143) ]
     for ip, (p, t_dict) in enumerate(patient_time_record_dict.items()):
         if ip % 10000 == 0:
-            print ip, len(patient_time_record_dict)
+            print(ip, len(patient_time_record_dict))
 
         label = patient_label_dict[p]
-        for t, vs in t_dict.items():
+        for t, vs in list(t_dict.items()):
             for v in vs:
                 feature, value = v
                 idx = int(value * n_split)
@@ -51,7 +51,7 @@ def draw_pic():
     flc = np.load('../file/feature_label_count.npy')
     for f in range(143):
         lc = flc[f]
-        x = range(len(lc[0]))
+        x = list(range(len(lc[0])))
         plt.plot(x,avg(lc[0]),'b')
         plt.plot(x,avg(lc[1]),'r')
         plt.savefig('../result/fig/{:d}.png'.format(f))

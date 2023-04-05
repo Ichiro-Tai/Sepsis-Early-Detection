@@ -15,13 +15,13 @@ def gen_json_data():
     patient_time_record_dict = dict()
     feature_index_dict = py_op.myreadjson(os.path.join(args.file_dir, 'feature_index_dict.json'))
     feature_value_order_dict = py_op.myreadjson(os.path.join(args.file_dir, 'feature_value_order_dict.json'))
-    feature_value_order_dict = { str(feature_index_dict[k]):v for k,v in feature_value_order_dict.items()  if 'event' not in k}
+    feature_value_order_dict = { str(feature_index_dict[k]):v for k,v in list(feature_value_order_dict.items())  if 'event' not in k}
     index_group_dict = py_op.myreadjson(os.path.join(args.file_dir, 'index_group_dict.json'))
     patient_time_dict = py_op.myreadjson(os.path.join(args.result_dir, 'patient_time_dict.json'))
     mx_time = - 100
     for i_line, line in enumerate(open(vital_file)):
         if i_line % 10000 == 0:
-            print 'line', i_line
+            print('line', i_line)
         if 'event_time' not in line:
             data = line.strip().split(',')
             patient, time = data[:2]
@@ -40,13 +40,13 @@ def gen_json_data():
                 if str(idx) in index_group_dict:
                     idx = index_group_dict[str(idx)]
                 value_order = feature_value_order_dict[str(idx)]
-                vs[idx] = value_order[val]
+                vs[idx] = value_order[val] if val in value_order else 0
             patient_time_record_dict[patient][time].update(vs)
 
     new_d = dict()
-    for p, tr in patient_time_record_dict.items():
+    for p, tr in list(patient_time_record_dict.items()):
         new_d[p] = dict()
-        for t, vs in tr.items():
+        for t, vs in list(tr.items()):
             if mx_time > 0:
                 t = int(t - patient_time_dict[p] - 4)
             if t < - 102:

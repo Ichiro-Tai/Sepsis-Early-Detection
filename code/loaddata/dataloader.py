@@ -12,7 +12,7 @@ import torch
 from torch.utils.data import Dataset
 
 sys.path.append('loaddata')
-import data_function
+from . import data_function
 
 
 class DataSet(Dataset):
@@ -43,7 +43,7 @@ class DataSet(Dataset):
 
     def get_visit_info(self, time_record_dict):
         # times = sorted([float(t) for t in time_record_dict.keys()])
-        times = sorted(time_record_dict.keys(), key=lambda s:float(s))
+        times = sorted(list(time_record_dict.keys()), key=lambda s:float(s))
         # for t in time_record_dict:
         #     time_record_dict[str(float(t))] = time_record_dict[t]
         visit_list = []

@@ -58,15 +58,15 @@ def measures(d_list):
     # 合并每一个预测的结果
     d_all = dict()
     for d in d_list:
-        for cls in d.keys():
+        for cls in list(d.keys()):
             if cls not in d_all:
                 d_all[cls] = dict()
-            for k in d[cls].keys():
+            for k in list(d[cls].keys()):
                 if k not in d_all[cls]:
                     d_all[cls][k] = 0
                 d_all[cls][k] += d[cls][k]
     m = dict()
-    number = sum([d_all[cls]['number'] for cls in d_all.keys()])
+    number = sum([d_all[cls]['number'] for cls in list(d_all.keys())])
     for cls in d_all:
         m[cls] = dict()
         m[cls]['number'] = d_all[cls]['number']
@@ -78,13 +78,13 @@ def measures(d_list):
     return m
 
 def print_measures(m, s = 'measures'):
-    print s
+    print(s)
     accuracy = 0
     for cls in sorted(m.keys()):
-        print '\tclass: {:d}\taccuracy:{:.6f}\tprecision:{:.6f}\tratio:{:.6f}\t\tN/T/P:{:d}/{:d}/{:d}\
-            '.format(cls, m[cls]['accuracy'],m[cls]['precision'],m[cls]['ratio'],m[cls]['number'],m[cls]['true'],m[cls]['pred'])
+        print('\tclass: {:d}\taccuracy:{:.6f}\tprecision:{:.6f}\tratio:{:.6f}\t\tN/T/P:{:d}/{:d}/{:d}\
+            '.format(cls, m[cls]['accuracy'],m[cls]['precision'],m[cls]['ratio'],m[cls]['number'],m[cls]['true'],m[cls]['pred']))
 	accuracy += m[cls]['accuracy'] * m[cls]['ratio']
-    print '\tacc:{:.6f}'.format(accuracy)
+    print('\tacc:{:.6f}'.format(accuracy))
     return accuracy
 
 def mse(pred_image, image):
@@ -131,7 +131,7 @@ def psnr_pred(stain_vis=20, end= 10000):
             continue
         if i>end:
             break
-        print i, min(end, 1000)
+        print(i, min(end, 1000))
 
         f.write(clean_file.split('/')[-1].split('.')[0])
         f.write(',')
@@ -145,9 +145,9 @@ def psnr_pred(stain_vis=20, end= 10000):
     psnr_list = np.array(psnr_list)
     psnr_mean = ((psnr_list[:,1] - psnr_list[:,0]) / psnr_list[:,0]).mean()
     if end > 1000:
-        print '网纹图PSNR', psnr_list[:,0].mean()
-        print '预测图PSNR', psnr_list[:,1].mean()
-        print '增益率', psnr_mean
+        print('网纹图PSNR', psnr_list[:,0].mean())
+        print('预测图PSNR', psnr_list[:,1].mean())
+        print('增益率', psnr_mean)
     f.write(str(psnr_mean))
     f.close()
     return psnr_list[:,0].mean()
@@ -156,12 +156,12 @@ def main():
     pmax = [0.,0.]
     for vis in range(1, 30):
         p = psnr_pred(vis, 10)
-        print vis, p
+        print(vis, p)
         if p > pmax[1]:
             pmax = [vis, p]
-    print '...'
+    print('...')
     # print 256,psnr_pred(256)
-    print pmax
+    print(pmax)
     # print 10 * np.log10(255*255/metrics.mean_squared_error([3],[9]))
 
 

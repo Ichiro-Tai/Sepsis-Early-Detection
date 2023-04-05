@@ -51,7 +51,7 @@ def setgpu(gpuinput):
         busy_gpu = [g not in freeids for g in gpus.split(',')]
         if any(busy_gpu):
             raise ValueError('gpu' + ' '.join(busy_gpu) + 'is being used')
-    print('using gpu ' + gpus)
+    print(('using gpu ' + gpus))
     os.environ['CUDA_VISIBLE_DEVICES'] = gpus
     return len(gpus.split(','))
 
@@ -69,7 +69,7 @@ def error_mask_stats(labels, filenames):
     error_f = list(set(error_f))
     fileid_list = [os.path.split(filename)[1].split('_')[0]
                    for filename in error_f]
-    print("','".join(fileid_list))
+    print(("','".join(fileid_list)))
     return error_f
 
 

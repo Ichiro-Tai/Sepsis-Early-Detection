@@ -37,7 +37,7 @@ def myreadfile(load_path):
         return f.read()
 
 def myprint(content):
-    print(json.dumps(content,indent=4,ensure_ascii=False))
+    print((json.dumps(content,indent=4,ensure_ascii=False)))
 
 def rm(fi):
     os.system('rm ' + fi)
@@ -47,7 +47,7 @@ def mystrip(s):
 
 def mysorteddict(d,key = lambda s:s, reverse=False):
     dordered = OrderedDict()
-    for k in sorted(d.keys(),key = key,reverse=reverse):
+    for k in sorted(list(d.keys()),key = key,reverse=reverse):
         dordered[k] = d[k]
     return dordered
 
@@ -103,9 +103,9 @@ def fuzz_list(node1_list,node2_list,score_baseline=66,proposal_num=10,string_map
                     match_score_dict[node2] = score
             else:
                 node2_list.remove(node2)
-        node2_sort = sorted(match_score_dict.keys(), key=lambda k:match_score_dict[k],reverse=True)
+        node2_sort = sorted(list(match_score_dict.keys()), key=lambda k:match_score_dict[k],reverse=True)
         node_dict[node1] = [[n,match_score_dict[n]] for n in node2_sort[:proposal_num]]
-        print(i,len(node1_list)) 
+        print((i,len(node1_list))) 
     return node_dict, node2_list
 
 def swap(a,b):
