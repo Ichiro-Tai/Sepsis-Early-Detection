@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.append('../code')
 
-import tools
+#import tools
 from tools import parse, py_op
 import numpy as np
 
@@ -17,8 +17,10 @@ args = parse.args
 def ana_feat_dist(task):
     n_split = 100
     feature_label_count = np.zeros((143, 2, n_split))
-    patient_time_record_dict = py_op.myreadjson(os.path.join(args.result_dir, 'json_data', '{:s}.json'.format(args.task)))
-    patient_label_dict = py_op.myreadjson(os.path.join(args.file_dir, 'patient_label_dict.{:s}.json'.format(args.task)))
+    #patient_time_record_dict = py_op.myreadjson(os.path.join(args.result_dir, 'json_data', '{:s}.json'.format(args.task)))
+    patient_time_record_dict = py_op.myreadjson(os.path.join(args.result_dir, 'patient_time_record_dict.json'.format(args.task)))
+    #patient_label_dict = py_op.myreadjson(os.path.join(args.file_dir, 'patient_label_dict.{:s}.json'.format(args.task)))
+    patient_label_dict = py_op.myreadjson(os.path.join(args.result_dir, 'patient_label_dict.json'))
     [ [ [0. for _ in range(n_split)], [0. for _ in range(n_split)] ] for i in range(143) ]
     for ip, (p, t_dict) in enumerate(patient_time_record_dict.items()):
         if ip % 10000 == 0:
@@ -59,14 +61,9 @@ def draw_pic():
         if f > 10:
             break
 
-
-    
-
-
-
 def main():
-    # analyze_features('task1')
-    # ana_feat_dist('task1')
+    #analyze_features('task1')
+    ana_feat_dist('task1')
     draw_pic()
 
 

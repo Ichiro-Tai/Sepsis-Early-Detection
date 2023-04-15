@@ -6,7 +6,7 @@ import json
 import numpy as np
 sys.path.append('../code')
 
-import tools
+#import tools
 from tools import parse
 args = parse.args
 

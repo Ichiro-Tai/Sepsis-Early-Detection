@@ -18,6 +18,9 @@ from tqdm import tqdm
 from tools import parse, py_op
 
 
+import pprint
+
+
 # torch
 import torch
 import torchvision
@@ -41,11 +44,15 @@ from models import lstm
 # 全局变量
 args = parse.args
 args.hard_mining = 0
-args.gpu = 1
+args.gpu = 0 #was 1 kbs
 args.use_trend = max(args.use_trend, args.use_value)
 args.use_value = max(args.use_trend, args.use_value)
 args.rnn_size = args.embed_size
 args.hidden_size = args.embed_size
+
+my_train_acc = []
+my_train_loss = []
+
 
 def train_eval(p_dict, phase='train'):
     ### 传入参数
@@ -84,6 +91,8 @@ def train_eval(p_dict, phase='train'):
             time = None
 
         classification_loss_output = loss(output, labels, args.hard_mining)
+
+        my_train_loss.append(classification_loss_output) #kbs 
         loss_gradient = classification_loss_output[0]
         # 计算性能指标
         function.compute_metric(output, labels, time, classification_loss_output, classification_metric_dict, phase)
@@ -231,6 +240,7 @@ def main():
         # return
 
 
+
     if args.phase == 'train':
 
         best_f1score = 0
@@ -240,6 +250,10 @@ def main():
                 param_group['lr'] = args.lr
             train_eval(p_dict, 'train')
             train_eval(p_dict, 'val')
+    
+    with open("MY_OUT1.txt", 'w') as ff:
+        pprint.pprint(my_train_loss, ff)
+    
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.append('../code')
 
-import tools
+#import tools
 from tools import parse, py_op
 args = parse.args
 

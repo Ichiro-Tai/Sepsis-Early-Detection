@@ -6,7 +6,7 @@ import sys
 import json
 sys.path.append('../code')
 
-import tools
+#import tools
 from tools import parse, py_op
 import numpy as np
 
