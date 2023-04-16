@@ -40,6 +40,8 @@ import loaddata
 from loaddata import dataloader
 from models import lstm
 
+import matplotlib.pyplot as plt
+import json
 
 # 全局变量
 args = parse.args
@@ -49,9 +51,6 @@ args.use_trend = max(args.use_trend, args.use_value)
 args.use_value = max(args.use_trend, args.use_value)
 args.rnn_size = args.embed_size
 args.hidden_size = args.embed_size
-
-my_train_acc = []
-my_train_loss = []
 
 
 def train_eval(p_dict, phase='train'):
@@ -68,6 +67,10 @@ def train_eval(p_dict, phase='train'):
     ### 局部变量定义
     classification_metric_dict = dict()
     # if args.task == 'case1':
+
+    running_loss = 0.0 #kbs
+    running_corrects = 0
+    data_count = 0
 
     for i,data in enumerate(tqdm(data_loader)):
         if args.use_visit:
@@ -92,14 +95,27 @@ def train_eval(p_dict, phase='train'):
 
         classification_loss_output = loss(output, labels, args.hard_mining)
 
-        my_train_loss.append(classification_loss_output) #kbs 
+        #my_train_loss.append(classification_loss_output.item()) #kbs 
         loss_gradient = classification_loss_output[0]
+
+
+        running_loss += classification_loss_output[0].item() * labels.size(0)
+        _, preds = torch.max(output, 1)
+        
+        correct_predictions = torch.sum(preds.unsqueeze(1) == labels, dim=1)
+        running_corrects += correct_predictions.sum().item()
+
+        labels = labels.squeeze()
+        running_corrects += torch.sum(preds == labels.data).item()
+        data_count += labels.size(0)
         # 计算性能指标
         function.compute_metric(output, labels, time, classification_loss_output, classification_metric_dict, phase)
 
         # print(outputs.size(), labels.size(),data[3].size(),segment_line_output.size())
         # print('detection', detect_character_labels.size(), detect_character_output.size())
         # return
+
+
 
         # 训练阶段
         if phase == 'train':
@@ -109,7 +125,8 @@ def train_eval(p_dict, phase='train'):
 
         # if i >= 10:
         #     break
-
+    epoch_loss = running_loss / data_count
+    epoch_accuracy = running_corrects / data_count
 
     print(('\nEpoch: {:d} \t Phase: {:s} \n'.format(epoch, phase)))
     metric = function.print_metric('classification', classification_metric_dict, phase)
@@ -147,9 +164,15 @@ def train_eval(p_dict, phase='train'):
     else:
         print(('train: metric: {:3.4f}\t epoch: {:d}\n'.format(metric, epoch)))
 
-
+    return epoch_loss, epoch_accuracy
 
 def main():
+
+    train_losses = [] #kbs
+    val_losses = []
+    train_accuracies = []
+    val_accuracies = []
+
     p_dict = dict() # All the parameters
     p_dict['args'] = args
     args.split_nn = args.split_num + args.split_nor * 3
@@ -171,10 +194,6 @@ def main():
         n = int(0.8 * len(patients))
         patient_train = patients[:n]
         patient_valid = patients[n:]
-
-
-
-
 
     print('data loading ...')
     train_dataset  = dataloader.DataSet(
@@ -239,7 +258,7 @@ def main():
         print('best_metric', p_dict['best_metric'])
         # return
 
-
+    tt = 1
 
     if args.phase == 'train':
 
@@ -248,12 +267,45 @@ def main():
             p_dict['epoch'] = epoch
             for param_group in optimizer.param_groups:
                 param_group['lr'] = args.lr
-            train_eval(p_dict, 'train')
-            train_eval(p_dict, 'val')
-    
-    with open("MY_OUT1.txt", 'w') as ff:
-        pprint.pprint(my_train_loss, ff)
-    
+
+            train_epoch_loss, train_epoch_accuracy = train_eval(p_dict, 'train')#kbs
+            #train_eval(p_dict, 'train')
+            val_epoch_loss, val_epoch_accuracy = train_eval(p_dict, 'val')
+            
+            train_losses.append(train_epoch_loss)
+            val_losses.append(val_epoch_loss)
+            train_accuracies.append(train_epoch_accuracy)
+            val_accuracies.append(val_epoch_accuracy)
+    results = {
+        "train_losses": train_losses,
+        "val_losses": val_losses,
+        "train_accuracies": train_accuracies,
+        "val_accuracies": val_accuracies,
+    }
+
+    with open("results.json", "w") as f:
+        json.dump(results, f)
+
+
+    plt.figure()
+    plt.plot(train_losses, label='Training Loss')
+    plt.plot(val_losses, label='Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.savefig('loss_plot.png')
+    plt.show()
+
+    # Plot training and validation accuracies
+    plt.figure()
+    plt.plot(train_accuracies, label='Training Accuracy')
+    plt.plot(val_accuracies, label='Validation Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.savefig('accuracy_plot.png')
+    plt.show()
+
 
 
 if __name__ == '__main__':
